@@ -57,8 +57,11 @@
 		<playground class="container" style="display: none">
 			<br>
 			<h1 class="text-center">AREA DE JUEGO</h1>
+			<br>
+			<h2 class="text-center" style="color:#FCA90B">num</h2>
 			<div class="card d-flex justify-content-center mx-auto text-center" style="width:75%; background-color:black; border-color:#013077">
 				<label style="color:#EFEFEFFF">Aquí va un enunciado o una pregunta</label>
+
 			</div>
 			<br>
 			<div class="card-deck">
@@ -96,7 +99,7 @@
 			<div class="container">
 				<br>
 				<div class="card d-flex justify-content-center mx-auto text-center" style="width:75%; background-color:black; border-color:#013077">
-					<a href="#" onclick="goto('menu')" style="color:#EFEFEFFF">Regresar</a>
+					<a href="#" onclick="goto(this,'menu')" style="color:#EFEFEFFF">Regresar</a>
 				</div>
 				<br>
 			</div>	
@@ -154,7 +157,6 @@
 		object = {
 			'0': element.innerHTML
 		}
-		console.log(object)
 
 		let xhttp = new XMLHttpRequest()
 		xhttp.open('POST', 'http://127.0.0.1:4040/games', true)
@@ -168,17 +170,39 @@
 	}
 
 	function playGame(level){
-		console.log(level)
 		label = document.getElementsByTagName("playground")[0]
 		label.getElementsByTagName("h1")[0].innerHTML = level.name
 		divs = label.getElementsByTagName("div")
-		console.log(divs)
+		i = 0
+		seconds = 5
+		label.getElementsByTagName("h2")[0].innerHTML = seconds + "Seg"
+
+		timer = setInterval(function(){
+			seconds--
+			if (seconds < 1) {
+				label.getElementsByTagName("h2")[0].innerHTML = "Tiempo fuera"
+				seconds = 6
+			}else{
+				label.getElementsByTagName("h2")[0].innerHTML = seconds + "Seg"
+			}
+		}, 1000)
+		countdown = setInterval(function(){
+			if (i == level.num_questions) {
+				clearInterval(countdown)
+				clearInterval(timer)
+				label.getElementsByTagName("h2")[0].innerHTML = "Fin Del Juego"
+			}else{
+				
+				divs[0].getElementsByTagName("label")[0].innerHTML = level.questions["question_"+i].statement
+				divs[1].getElementsByTagName("div")[0].getElementsByTagName("a")[0].innerHTML = level.questions["question_"+i].answer_0
+				divs[1].getElementsByTagName("div")[1].getElementsByTagName("a")[0].innerHTML = level.questions["question_"+i].answer_1
+				divs[4].getElementsByTagName("div")[0].getElementsByTagName("a")[0].innerHTML = level.questions["question_"+i].answer_2
+				divs[4].getElementsByTagName("div")[1].getElementsByTagName("a")[0].innerHTML = level.questions["question_"+i].answer_3
+				i++
+			}
+		},6000)
 		
-		divs[0].getElementsByTagName("label")[0].innerHTML = level.questions.question_0.statement
-		divs[1].getElementsByTagName("div")[0].getElementsByTagName("a")[0].innerHTML = level.questions.question_0.answer_0
-		divs[1].getElementsByTagName("div")[1].getElementsByTagName("a")[0].innerHTML = level.questions.question_0.answer_1
-		divs[4].getElementsByTagName("div")[0].getElementsByTagName("a")[0].innerHTML = level.questions.question_0.answer_2
-		divs[4].getElementsByTagName("div")[1].getElementsByTagName("a")[0].innerHTML = level.questions.question_0.answer_3
+			
 	}
 </script>
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
