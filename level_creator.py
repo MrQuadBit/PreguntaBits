@@ -4,14 +4,14 @@ def main():
     level['name'] = input('Nombre del nivel: ')
     
     cards = dict()
-    level['num_cards'] = int(input('Ingrese número de cartas: ')) 
-    for card in range(level['num_cards']):
+    level['num_questions'] = int(input('Ingrese el número de preguntas: ')) 
+    for card in range(level['num_questions']):
         temp = dict()
         temp['statement'] = input('Ingrese enunciado: ')
         for x in range(4):
-            temp[x] = input(f'Ingrese respuesta [{x}]: ')
-        cards[card] = temp
-    level['cards'] = cards
+            temp[f'answer_{x}'] = input(f'Ingrese respuesta [{x+1}]: ')
+        cards[f'question_{card}'] = temp
+    level['questions'] = cards
 
     f = open('data/levels.txt', 'a')
     f.write(json.dumps(level))

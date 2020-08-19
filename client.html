@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<title>PreguntaBits</title>
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+	<link href='https://fonts.googleapis.com/css?family=Inconsolata' rel='stylesheet'>
+	<style type="text/css">
+		body{
+			font-family: 'Inconsolata';
+			background: black;
+		}
+		h1{
+			color:#FFD902;
+		}
+	</style>
+</head>
+<body>
+	<main class="container">
+		<menu class="container" style="display: block;">
+			<br>
+			<h1 class="text-center">PreguntaBits</h1>
+			<br>
+
+			<div class="container">
+				<div class="card d-flex justify-content-center mx-auto text-center" style="width:75%; background-color:black; border-color:#013077">
+					<a href="#" onclick="goto(this,'levels')" style="color:#EFEFEFFF">Niveles</a>
+				</div>
+				<br>
+				<div class="card d-flex justify-content-center mx-auto text-center" style="width:75%; background-color:black; border-color:#013077">
+					<a href="#" onclick="goto(this,'scores')" style="color:#EFEFEFFF">Puntajes</a>
+				</div>
+				<br>
+			</div>	
+		</menu>
+
+		<levels class="container" style="display: none;">
+			<br>
+			<h1 class="text-center">NIVELES</h1>
+			<br>
+
+			<div class="container">
+				<div class="card d-flex justify-content-center mx-auto text-center" style="width:75%; background-color:black; border-color:#013077">
+					<a href="#" onclick="goto(this,'playground')" style="color:#EFEFEFFF">Tutorial</a>
+				</div>
+			</div>
+
+			<div class="container">
+				<br>
+				<div class="card d-flex justify-content-center mx-auto text-center" style="width:75%; background-color:black; border-color:#013077">
+					<a href="#" onclick="goto(this,'menu')" style="color:#EFEFEFFF">Regresar</a>
+				</div>
+				<br>
+			</div>	
+		</levels>
+		<playground class="container" style="display: none">
+			<br>
+			<h1 class="text-center">AREA DE JUEGO</h1>
+			<div class="card d-flex justify-content-center mx-auto text-center" style="width:75%; background-color:black; border-color:#013077">
+				<label style="color:#EFEFEFFF">Aquí va un enunciado o una pregunta</label>
+			</div>
+			<br>
+			<div class="card-deck">
+				<div class="card" style="background-color:#F90506;">
+					<a href="#" class="text-center" style="color:#EFEFEFFF">Respuesta 1</a>
+				</div>
+				<div class="card" style="background-color:#02CDFF;">
+					<a href="#" class="text-center" style="color:#000000;">Respuesta 2</a>
+				</div>
+			</div>
+			<br>
+			<div class="card-deck">
+				<div class="card" style="background-color:#FFA9DC;">
+					<a href="#" class="text-center" style="color:#000000;">Respuesta 3</a>
+				</div>
+				<div class="card" style="background-color:#FCA90B;">
+					<a href="#" class="text-center" style="color:#EFEFEFFF">Respuesta 4</a>
+				</div>
+			</div>
+			<br>
+
+			<div class="container">
+				<br>
+				<div class="card d-flex justify-content-center mx-auto text-center" style="width:75%; background-color:black; border-color:#013077">
+					<a href="#" onclick="goto(this,'levels')" style="color:#EFEFEFFF">Regresar a NIVELES</a>
+				</div>
+				<br>
+			</div>	
+		</playground>
+
+		<scores class="container" style="display: none;">
+			<br>
+			<h1 class="text-center">PUNTAJES</h1>
+
+			<div class="container">
+				<br>
+				<div class="card d-flex justify-content-center mx-auto text-center" style="width:75%; background-color:black; border-color:#013077">
+					<a href="#" onclick="goto('menu')" style="color:#EFEFEFFF">Regresar</a>
+				</div>
+				<br>
+			</div>	
+
+		</scores>	
+	</main>
+</body>
+<script type="text/javascript">
+	function goto(element, place){
+		document.getElementsByTagName('menu')[0].style.display = "none"
+		document.getElementsByTagName('playground')[0].style.display = "none"
+		document.getElementsByTagName('scores')[0].style.display = "none"
+		document.getElementsByTagName('levels')[0].style.display = "none"
+		document.getElementsByTagName(place)[0].style.display = "block"
+
+		switch(place){
+			case "levels":
+				getLevels()
+			break;
+
+			case "playground":
+				getGame(element)
+			break;
+		}
+	}
+
+	function getLevels() {
+		let xhttp = new XMLHttpRequest()
+		xhttp.onreadystatechange = function (){
+			if (this.readyState == 4 && this.status == 200) {
+				json = this.responseText
+				printLevels(JSON.parse(json))
+			}
+		}
+		xhttp.open('GET', 'http://127.0.0.1:4040/games', true)
+		xhttp.send()
+	}
+
+	function printLevels(levels){
+		label = document.getElementsByTagName("levels")[0]
+		container = label.getElementsByTagName("div")[0]
+		layout = container.children[0].cloneNode(true)
+
+		container.innerHTML = ""
+
+		for(const[key, value] of Object.entries(levels)){
+			let new_level = layout.cloneNode(true)
+			new_level.getElementsByTagName("a")[0].innerHTML = value
+			container.appendChild(new_level)
+			container.appendChild(document.createElement('br'))
+		}
+	}
+
+	function getGame(element){
+		object = {
+			'0': element.innerHTML
+		}
+		console.log(object)
+
+		let xhttp = new XMLHttpRequest()
+		xhttp.open('POST', 'http://127.0.0.1:4040/games', true)
+		xhttp.onreadystatechange = function (){
+			if (this.readyState == 4 && this.status == 200) {
+				json = this.responseText
+				playGame(JSON.parse(json))
+			}
+		}
+		xhttp.send(JSON.stringify(object))
+	}
+
+	function playGame(level){
+		console.log(level)
+		label = document.getElementsByTagName("playground")[0]
+		label.getElementsByTagName("h1")[0].innerHTML = level.name
+		divs = label.getElementsByTagName("div")
+		console.log(divs)
+		
+		divs[0].getElementsByTagName("label")[0].innerHTML = level.questions.question_0.statement
+		divs[1].getElementsByTagName("div")[0].getElementsByTagName("a")[0].innerHTML = level.questions.question_0.answer_0
+		divs[1].getElementsByTagName("div")[1].getElementsByTagName("a")[0].innerHTML = level.questions.question_0.answer_1
+		divs[4].getElementsByTagName("div")[0].getElementsByTagName("a")[0].innerHTML = level.questions.question_0.answer_2
+		divs[4].getElementsByTagName("div")[1].getElementsByTagName("a")[0].innerHTML = level.questions.question_0.answer_3
+	}
+</script>
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV" crossorigin="anonymous"></script>
+</html>
